@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,15 +24,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.robotoFamily
+import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
 import com.example.cryptoviewer.R
 
 
 @Composable
-fun TokensList() {
+fun TokenListScreen() {
     Scaffold(
         topBar = {
             Column {
@@ -67,14 +70,18 @@ fun ScreenContent(innerPadding: PaddingValues) {
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
-        LazyColumn {
-            items(20) {
-                ListElement("Bitcoin", "BTC", 12434.42f, 4.05f, currency = "$"   )
-            }
-        }
+        TokenList()
     }
 }
 
+@Composable
+fun TokenList(tokenListViewModel: TokenListViewModel = viewModel()){
+    LazyColumn {
+        items(tokenListViewModel.getTokens()) { token ->
+            ListElement(token.name, token.ticker, token.price, token.priceChangePercentage, token.currency)
+        }
+    }
+}
 @Composable
 fun ListElement(name: String, ticker: String, price: Float, delta: Float, currency: String) {
     Box(modifier = Modifier
@@ -110,7 +117,7 @@ fun ListElement(name: String, ticker: String, price: Float, delta: Float, curren
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    TokensList()
+    TokenListScreen()
 }
 
 

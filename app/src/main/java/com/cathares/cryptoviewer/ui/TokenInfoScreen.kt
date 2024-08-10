@@ -26,7 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
+import com.cathares.cryptoviewer.ui.viemodel.TokenInfoViewModel
 import com.example.cryptoviewer.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,14 +62,15 @@ fun TokenInfoScreen(name: String, navigateBack: () -> Unit = {}) {
 @Composable
 fun TokenInfoScreenContent(innerPadding: PaddingValues) {
     Column(modifier = Modifier.padding(innerPadding)) {
-        TokenDescription(description = "Something", categories = "Something more")
+        TokenDescription()
     }
-
 }
 
 
 @Composable
-fun TokenDescription(description: String, categories: String) {
+fun TokenDescription() {
+    val tokenInfoViewModel: TokenInfoViewModel = viewModel()
+    val tokenInfo = tokenInfoViewModel.getTokenInfo()
     val state = rememberScrollState() //FIX!!!
     Column(
         modifier = Modifier
@@ -89,7 +92,7 @@ fun TokenDescription(description: String, categories: String) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = description,
+            text = tokenInfo.description,
             fontSize = 16.sp
         )
         Text(
@@ -99,7 +102,7 @@ fun TokenDescription(description: String, categories: String) {
             fontWeight = FontWeight.Bold
             )
         Text(
-            text = categories,
+            text = tokenInfo.categories,
             fontSize = 16.sp
         )
     }
