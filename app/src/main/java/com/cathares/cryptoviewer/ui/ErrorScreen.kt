@@ -21,7 +21,7 @@ import com.cathares.cryptoviewer.ui.theme.White
 import com.example.cryptoviewer.R
 
 @Composable
-fun ErrorScreen(onClick: () -> Unit) {
+fun ErrorScreen(onClick: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(

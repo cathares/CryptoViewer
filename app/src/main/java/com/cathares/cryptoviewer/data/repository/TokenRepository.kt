@@ -1,7 +1,8 @@
 package com.cathares.cryptoviewer.data.repository
 
-import com.cathares.cryptoviewer.data.Token
+import com.cathares.cryptoviewer.data.NetworkResult
+import com.cathares.cryptoviewer.data.TokenResponse
 
 interface TokenRepository {
-    fun getTokens(): List<Token>
+    suspend fun getTokens(): NetworkResult<List<TokenResponse>>
 }

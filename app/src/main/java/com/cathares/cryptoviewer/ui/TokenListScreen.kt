@@ -1,5 +1,6 @@
 package com.cathares.cryptoviewer.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -24,13 +26,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.robotoFamily
 import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
 import com.example.cryptoviewer.R
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -67,23 +72,37 @@ fun TokenListScreen() {
 
 @Composable
 fun ScreenContent(innerPadding: PaddingValues) {
+    val tokenListViewModel: TokenListViewModel = koinViewModel()
+    val tokenListUIState by tokenListViewModel.tokenListUIState.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
-        TokenList()
-    }
-}
-
-@Composable
-fun TokenList(tokenListViewModel: TokenListViewModel = viewModel()){
-    LazyColumn {
-        items(tokenListViewModel.getTokens()) { token ->
-            ListElement(token.name, token.ticker, token.price, token.priceChangePercentage, token.currency)
+        AnimatedVisibility(visible = tokenListUIState.isLoading) {
+            LoadingCircle()
+        }
+        AnimatedVisibility(visible = tokenListUIState.tokens.isNotEmpty()) {
+            LazyColumn {
+                items(tokenListUIState.tokens) { token ->
+                    ListElement(
+                        token.name,
+                        token.image,
+                        token.symbol,
+                        token.currentPrice.toFloat(),
+                        token.priceChangePercentage24h.toFloat(),
+                        "$"
+                    )
+                }
+            } 
+        }
+        AnimatedVisibility(visible = tokenListUIState.error != null) {
+            ErrorScreen()
         }
     }
 }
+
+
 @Composable
-fun ListElement(name: String, ticker: String, price: Float, delta: Float, currency: String) {
+fun ListElement(name: String, imageURL: String, ticker: String, price: Float, delta: Float, currency: String) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(56.dp)) {
@@ -93,20 +112,18 @@ fun ListElement(name: String, ticker: String, price: Float, delta: Float, curren
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_btc_small),
-                    contentDescription = "21",
-                    modifier = Modifier
-                )
+                AsyncImage(model = imageURL, contentDescription = "Image for a token")
                 Column(modifier = Modifier.padding(8.dp,0.dp)) {
                     Text(text = name)
-                    Text(text = ticker)
+                    Text(
+                        text = ticker.uppercase()
+                    )
                 }
             }
             Column {
                 Text(text = "$currency $price")
                 Text(
-                    text = if (delta > 0)  "+$delta%" else "-$delta%",
+                    text = if (delta > 0)  "+$delta%" else "$delta%",
                     color = if (delta > 0)  GreenPositive else RedNegative
                 )
             }
