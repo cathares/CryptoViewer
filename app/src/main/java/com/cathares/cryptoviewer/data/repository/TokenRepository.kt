@@ -4,5 +4,5 @@ import com.cathares.cryptoviewer.data.NetworkResult
 import com.cathares.cryptoviewer.data.TokenResponse
 
 interface TokenRepository {
-    suspend fun getTokens(): NetworkResult<List<TokenResponse>>
+    suspend fun getTokens(currency: String): NetworkResult<List<TokenResponse>>
 }

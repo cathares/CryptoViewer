@@ -8,16 +8,16 @@ import kotlinx.coroutines.withContext
 
 class TokenRepositoryImpl(
     private val cryptoAPI: CryptoAPI,
-    private val dispatcher: CoroutineDispatcher
+    private val dispatcher: CoroutineDispatcher,
 ): TokenRepository {
-    override suspend fun getTokens(): NetworkResult<List<TokenResponse>> {
+    override suspend fun getTokens(currency: String): NetworkResult<List<TokenResponse>> {
         return withContext(dispatcher) {
             try {
-                val response = cryptoAPI.fetchTokens("usd")
+                val response = cryptoAPI.fetchTokens(currency)
                 if (response.isSuccessful) {
                     NetworkResult.Success(response.body()!!)
                 } else {
-                    NetworkResult.Error(response.errorBody().toString())
+                    NetworkResult.Error(response.code().toString())
                 }
             } catch (e: Exception) {
                 NetworkResult.Error(e.message ?: "Error")

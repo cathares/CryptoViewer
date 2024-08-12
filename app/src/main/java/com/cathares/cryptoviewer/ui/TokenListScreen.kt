@@ -1,7 +1,6 @@
 package com.cathares.cryptoviewer.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,25 +20,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.cathares.cryptoviewer.data.TokenListUIState
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.robotoFamily
 import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
-import com.example.cryptoviewer.R
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun TokenListScreen() {
+    val tokenListViewModel: TokenListViewModel = koinViewModel()
+    val tokenListUIState by tokenListViewModel.tokenListUIState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             Column {
@@ -49,14 +48,14 @@ fun TokenListScreen() {
                         .padding(13.dp)
                 ) {
                     Text(
-                        text = "Список криптовалют", //ИСПРАВИТЬ
+                        text = "Список криптовалют", //ПОЧИНИ
                         fontFamily = robotoFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 20.sp,
                         color = Color(0xFF000000).copy(alpha = 0.87f)
                     )
                     Box(modifier = Modifier.padding(0.dp, 32.dp, 0.dp, 13.dp)) {
-                        ChipGroup()
+                        ChipGroup(tokenListUIState.chipSelected) { tokenListViewModel.switchChip() }
                     }
                 }
                 Divider(
@@ -66,14 +65,16 @@ fun TokenListScreen() {
             }
         },
     ){ innerPadding ->
-        ScreenContent(innerPadding)
+        ScreenContent(innerPadding, tokenListUIState, tokenListViewModel)
     }
 }
 
 @Composable
-fun ScreenContent(innerPadding: PaddingValues) {
-    val tokenListViewModel: TokenListViewModel = koinViewModel()
-    val tokenListUIState by tokenListViewModel.tokenListUIState.collectAsStateWithLifecycle()
+fun ScreenContent(
+    innerPadding: PaddingValues,
+    tokenListUIState: TokenListUIState,
+    tokenListViewModel: TokenListViewModel
+) {
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
@@ -89,13 +90,13 @@ fun ScreenContent(innerPadding: PaddingValues) {
                         token.symbol,
                         token.currentPrice.toFloat(),
                         token.priceChangePercentage24h.toFloat(),
-                        "$"
+                        if (tokenListUIState.chipSelected) "$" else "₽"
                     )
                 }
             } 
         }
         AnimatedVisibility(visible = tokenListUIState.error != null) {
-            ErrorScreen()
+            ErrorScreen { tokenListViewModel.retry() }
         }
     }
 }
@@ -115,9 +116,7 @@ fun ListElement(name: String, imageURL: String, ticker: String, price: Float, de
                 AsyncImage(model = imageURL, contentDescription = "Image for a token")
                 Column(modifier = Modifier.padding(8.dp,0.dp)) {
                     Text(text = name)
-                    Text(
-                        text = ticker.uppercase()
-                    )
+                    Text(text = ticker.uppercase())
                 }
             }
             Column {
