@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.data
+package com.cathares.cryptoviewer.data.network
 
 sealed class NetworkResult<out T> {
     data class Success<out T>(val data: T) : NetworkResult<T>()

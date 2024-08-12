@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.data
+package com.cathares.cryptoviewer.data.network
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

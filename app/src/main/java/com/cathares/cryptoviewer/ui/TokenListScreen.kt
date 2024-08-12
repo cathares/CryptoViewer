@@ -1,6 +1,7 @@
 package com.cathares.cryptoviewer.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,13 +32,16 @@ import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.robotoFamily
+import com.cathares.cryptoviewer.ui.viemodel.TokenInfoViewModel
 import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun TokenListScreen() {
-    val tokenListViewModel: TokenListViewModel = koinViewModel()
+fun TokenListScreen(
+    tokenListViewModel: TokenListViewModel = koinViewModel(),
+    tokenInfoViewModel: TokenInfoViewModel = koinViewModel()
+) {
     val tokenListUIState by tokenListViewModel.tokenListUIState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
@@ -65,7 +69,7 @@ fun TokenListScreen() {
             }
         },
     ){ innerPadding ->
-        ScreenContent(innerPadding, tokenListUIState, tokenListViewModel)
+        ScreenContent(innerPadding, tokenListUIState, tokenListViewModel, tokenInfoViewModel)
     }
 }
 
@@ -73,7 +77,8 @@ fun TokenListScreen() {
 fun ScreenContent(
     innerPadding: PaddingValues,
     tokenListUIState: TokenListUIState,
-    tokenListViewModel: TokenListViewModel
+    tokenListViewModel: TokenListViewModel,
+    tokenInfoViewModel: TokenInfoViewModel
 ) {
     Column(
         modifier = Modifier.padding(innerPadding)
@@ -90,7 +95,8 @@ fun ScreenContent(
                         token.symbol,
                         token.currentPrice.toFloat(),
                         token.priceChangePercentage24h.toFloat(),
-                        if (tokenListUIState.chipSelected) "$" else "₽"
+                        if (tokenListUIState.chipSelected) "$" else "₽",
+                        onClick = {tokenInfoViewModel.getInfo(token.name)}
                     )
                 }
             } 
@@ -103,10 +109,19 @@ fun ScreenContent(
 
 
 @Composable
-fun ListElement(name: String, imageURL: String, ticker: String, price: Float, delta: Float, currency: String) {
+fun ListElement(
+    name: String,
+    imageURL: String,
+    ticker: String,
+    price: Float,
+    delta: Float,
+    currency: String,
+    onClick: () -> Unit
+    ) {
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(56.dp)) {
+        .height(56.dp)
+        .clickable {onClick()}) {
         Row(modifier = Modifier
             .fillMaxSize()
             .padding(16.dp, 8.dp),
