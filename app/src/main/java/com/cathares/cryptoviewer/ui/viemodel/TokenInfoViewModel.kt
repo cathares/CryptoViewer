@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cathares.cryptoviewer.data.network.NetworkResult
-import com.cathares.cryptoviewer.data.TokenInfoUIState
+import com.cathares.cryptoviewer.ui.state.TokenInfoUIState
 import com.cathares.cryptoviewer.data.repository.TokenInfoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

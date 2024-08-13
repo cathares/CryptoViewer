@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,10 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.cathares.cryptoviewer.data.TokenInfoUIState
+import com.cathares.cryptoviewer.ui.state.TokenInfoUIState
 import com.cathares.cryptoviewer.ui.elements.ErrorMessage
 import com.cathares.cryptoviewer.ui.elements.LoadingCircle
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
+import com.cathares.cryptoviewer.ui.theme.Typography
+import com.cathares.cryptoviewer.ui.theme.bodyLarge
+import com.cathares.cryptoviewer.ui.theme.bodyMedium
+import com.cathares.cryptoviewer.ui.theme.titleLarge
 import com.cathares.cryptoviewer.ui.viemodel.TokenInfoViewModel
 import com.example.cryptoviewer.R
 
@@ -44,7 +50,11 @@ fun TokenInfoScreen(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { tokenInfoUIState.tokenInfo?.let { Text(text = it.name) } },
+                    title = { tokenInfoUIState.tokenInfo?.let { Text(
+                        text = it.name,
+                        style = titleLarge,
+
+                    ) } },
                     navigationIcon = {
                         IconButton(onClick = navigateBack) {
                             Icon(
@@ -79,7 +89,7 @@ fun TokenInfoScreenContent(
             TokenDescription(
                 image = tokenInfoUIState.image!!.largeImage,
                 description = tokenInfoUIState.description!!.description,
-                categories = tokenInfoUIState.tokenInfo!!.categories[0])
+                categories = tokenInfoUIState.tokenInfo!!.categories)
         }
         AnimatedVisibility(visible = tokenInfoUIState.error != null) {
             ErrorMessage { tokenInfoUIState.tokenInfo?.let { tokenInfoViewModel.retry(it.name) } }
@@ -92,14 +102,18 @@ fun TokenInfoScreenContent(
 fun TokenDescription(
     image: String,
     description: String,
-    categories: String
+    categories: List<String>,
 ) {
-    val state = rememberScrollState() //FIX!!!
+    val scrollState = rememberScrollState()
+    val regex = """<a\s+href="[^"]*">(.*?)</a>""".toRegex(RegexOption.IGNORE_CASE)
+    val formattedDescription = description.replace(regex) {
+        it.groupValues[1]
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 10.dp, 16.dp, 0.dp)
-            .verticalScroll(state),
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.Start
     ) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -108,23 +122,22 @@ fun TokenDescription(
         Text(
             text = "Описание",
             modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 8.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            style = bodyLarge
         )
         Text(
-            text = description,
-            fontSize = 16.sp
+            text = formattedDescription,
+            style = bodyMedium
         )
         Text(
             text = "Категории",
             modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 8.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            style = bodyLarge
             )
         Text(
-            text = categories,
-            fontSize = 16.sp
+            text = categories.joinToString(separator = ", "),
+            style = bodyMedium
         )
+        Spacer(modifier = Modifier.fillMaxWidth().height(34.dp))
     }
 }
 @Preview(showBackground = true)

@@ -41,7 +41,7 @@ fun AppNavigation(
         }
         composable(Screens.TokenInfoScreen.route) {
             TokenInfoScreen(
-                navigateBack = {navController.popBackStack()},
+                navigateBack = { navController.popBackStack() },
                 tokenInfoViewModel = tokenInfoViewModel,
                 tokenInfoUIState = tokenInfoUIState
             )

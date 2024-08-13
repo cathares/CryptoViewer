@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.data
+package com.cathares.cryptoviewer.ui.state
 
 import com.cathares.cryptoviewer.data.network.Description
 import com.cathares.cryptoviewer.data.network.Image

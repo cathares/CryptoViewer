@@ -13,11 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cathares.cryptoviewer.ui.theme.Orange
 import com.cathares.cryptoviewer.ui.theme.White
+import com.cathares.cryptoviewer.ui.theme.bodyMedium
+import com.cathares.cryptoviewer.ui.theme.labelMedium
 import com.example.cryptoviewer.R
 
 @Composable
@@ -29,7 +34,9 @@ fun ErrorMessage(onClick: () -> Unit) {
                 contentDescription = "BTC icon",
             )
             Text(
-                text = "Произошла какая-то ошибка :(\n" + "Попробуем снова?",
+                text = stringResource(id = R.string.error),
+                textAlign = TextAlign.Center,
+                style = bodyMedium,
                 modifier = Modifier.padding(0.dp, 13.dp, 0.dp, 30.dp)
             )
             Button(
@@ -41,7 +48,11 @@ fun ErrorMessage(onClick: () -> Unit) {
                     contentColor = White
                 ),
             ) {
-                Text(text = "Попробовать")
+                Text(
+                    text = "Попробовать",
+                    style = labelMedium,
+                    color = White
+                )
             }
         }
     }
