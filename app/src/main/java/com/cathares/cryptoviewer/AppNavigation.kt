@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cathares.cryptoviewer.ui.TokenInfoScreen
-import com.cathares.cryptoviewer.ui.TokenListScreen
+import com.cathares.cryptoviewer.ui.screens.TokenInfoScreen
+import com.cathares.cryptoviewer.ui.screens.TokenListScreen
 import com.cathares.cryptoviewer.ui.viemodel.TokenInfoViewModel
 import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -20,7 +20,7 @@ sealed class Screens(val route: String) {
 }
 
 @Composable
-fun App(
+fun AppNavigation(
     navController: NavHostController = rememberNavController(),
 ) {
     val tokenInfoViewModel: TokenInfoViewModel = koinViewModel()

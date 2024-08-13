@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.ui
+package com.cathares.cryptoviewer.ui.elements
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,7 @@ import com.cathares.cryptoviewer.ui.theme.White
 import com.example.cryptoviewer.R
 
 @Composable
-fun ErrorScreen(onClick: () -> Unit) {
+fun ErrorMessage(onClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
@@ -50,5 +50,5 @@ fun ErrorScreen(onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ErrorScreenPreview(){
-    ErrorScreen(onClick = {})
+    ErrorMessage(onClick = {})
 }

@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.ui
+package com.cathares.cryptoviewer.ui.elements
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

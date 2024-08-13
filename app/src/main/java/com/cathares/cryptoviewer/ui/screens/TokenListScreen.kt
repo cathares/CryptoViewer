@@ -1,4 +1,4 @@
-package com.cathares.cryptoviewer.ui
+package com.cathares.cryptoviewer.ui.screens
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
@@ -18,7 +18,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -26,16 +25,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.cathares.cryptoviewer.data.TokenListUIState
+import com.cathares.cryptoviewer.ui.elements.ChipGroup
+import com.cathares.cryptoviewer.ui.elements.ErrorMessage
+import com.cathares.cryptoviewer.ui.elements.LoadingCircle
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.robotoFamily
 import com.cathares.cryptoviewer.ui.viemodel.TokenInfoViewModel
 import com.cathares.cryptoviewer.ui.viemodel.TokenListViewModel
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -115,7 +115,7 @@ fun ScreenContent(
             } 
         }
         AnimatedVisibility(visible = tokenListUIState.error != null) {
-            ErrorScreen { tokenListViewModel.retry() }
+            ErrorMessage { tokenListViewModel.retry() }
         }
     }
 }
