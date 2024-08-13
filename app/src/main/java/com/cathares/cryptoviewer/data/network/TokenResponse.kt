@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TokenResponse(
+    @SerialName("id")
+    val id: String,
     @SerialName("symbol")
     val symbol: String,
     @SerialName("name")

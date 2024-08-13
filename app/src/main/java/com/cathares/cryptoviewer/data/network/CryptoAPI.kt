@@ -9,7 +9,8 @@ interface CryptoAPI {
 
     @GET("coins/markets")
     suspend fun fetchTokens(
-        @Query("vs_currency") currency: String
+        @Query("vs_currency") currency: String,
+        @Query("per_page") perPage: Int
     ): Response<ArrayList<TokenResponse>>
 
     @GET("coins/{id}")

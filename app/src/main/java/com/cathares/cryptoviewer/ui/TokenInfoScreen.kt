@@ -37,11 +37,10 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TokenInfoScreen(
-    tokenInfoViewModel: TokenInfoViewModel = koinViewModel(),
-    navigateBack: () -> Unit = {}
+    tokenInfoViewModel: TokenInfoViewModel,
+    navigateBack: () -> Unit = {},
+    tokenInfoUIState: TokenInfoUIState
 ) {
-    val tokenInfoUIState by tokenInfoViewModel.tokenInfoUIState.collectAsStateWithLifecycle()
-    tokenInfoViewModel.getInfo("bitcoin")
     Scaffold(
         topBar = {
             Column {
@@ -132,5 +131,4 @@ fun TokenDescription(
 @Preview(showBackground = true)
 @Composable
 fun TokenInfoPreview(){
-    TokenInfoScreen()
 }

@@ -13,7 +13,7 @@ class TokenRepositoryImpl(
     override suspend fun getTokens(currency: String): NetworkResult<List<TokenResponse>> {
         return withContext(dispatcher) {
             try {
-                val response = cryptoAPI.fetchTokens(currency)
+                val response = cryptoAPI.fetchTokens(currency, 30)
                 if (response.isSuccessful) {
                     NetworkResult.Success(response.body()!!)
                 } else {

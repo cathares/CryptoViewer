@@ -1,5 +1,6 @@
 package com.cathares.cryptoviewer.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,10 +40,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TokenListScreen(
-    tokenListViewModel: TokenListViewModel = koinViewModel(),
-    tokenInfoViewModel: TokenInfoViewModel = koinViewModel()
+    tokenListViewModel: TokenListViewModel,
+    onClick: () -> Unit,
+    tokenListUIState: TokenListUIState,
+    tokenInfoViewModel: TokenInfoViewModel
 ) {
-    val tokenListUIState by tokenListViewModel.tokenListUIState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             Column {
@@ -69,7 +71,13 @@ fun TokenListScreen(
             }
         },
     ){ innerPadding ->
-        ScreenContent(innerPadding, tokenListUIState, tokenListViewModel, tokenInfoViewModel)
+        ScreenContent(
+            innerPadding,
+            tokenListUIState,
+            tokenListViewModel,
+            onClick,
+            tokenInfoViewModel
+        )
     }
 }
 
@@ -78,6 +86,7 @@ fun ScreenContent(
     innerPadding: PaddingValues,
     tokenListUIState: TokenListUIState,
     tokenListViewModel: TokenListViewModel,
+    onClick: () -> Unit,
     tokenInfoViewModel: TokenInfoViewModel
 ) {
     Column(
@@ -96,7 +105,11 @@ fun ScreenContent(
                         token.currentPrice.toFloat(),
                         token.priceChangePercentage24h.toFloat(),
                         if (tokenListUIState.chipSelected) "$" else "₽",
-                        onClick = {tokenInfoViewModel.getInfo(token.name)}
+                        onClick = {
+                            tokenInfoViewModel.getInfo(token.id)
+                            onClick()
+                            Log.e("INFOR", token.name)
+                        }
                     )
                 }
             } 
@@ -148,7 +161,6 @@ fun ListElement(
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    TokenListScreen()
 }
 
 
