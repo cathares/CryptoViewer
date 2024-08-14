@@ -15,20 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.cathares.cryptoviewer.ui.state.TokenListUIState
 import com.cathares.cryptoviewer.ui.elements.ChipGroup
@@ -39,7 +41,6 @@ import com.cathares.cryptoviewer.ui.theme.GreenPositive
 import com.cathares.cryptoviewer.ui.theme.RedNegative
 import com.cathares.cryptoviewer.ui.theme.percentageStyle
 import com.cathares.cryptoviewer.ui.theme.priceStyle
-import com.cathares.cryptoviewer.ui.theme.robotoFamily
 import com.cathares.cryptoviewer.ui.theme.tickerStyle
 import com.cathares.cryptoviewer.ui.theme.titleLarge
 import com.cathares.cryptoviewer.ui.theme.tokenNameStyle
@@ -69,12 +70,12 @@ fun TokenListScreen(
                         style = titleLarge
                     )
                     Box(modifier = Modifier.padding(0.dp, 32.dp, 0.dp, 13.dp)) {
-                        ChipGroup(tokenListUIState.chipSelected) { tokenListViewModel.switchChip() }
+                        ChipGroup(tokenListUIState.chipSelected) { tokenListViewModel.onChipSwitch() }
                     }
                 }
-                Divider(
-                    color = BlackTransparent,
+                HorizontalDivider(
                     modifier = Modifier.shadow(4.dp),
+                    color = BlackTransparent
                 )
             }
         },
@@ -89,6 +90,7 @@ fun TokenListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenContent(
     innerPadding: PaddingValues,
@@ -100,30 +102,47 @@ fun ScreenContent(
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
+        val pullRefreshState = rememberPullToRefreshState()
+        if (pullRefreshState.isRefreshing) {
+            LaunchedEffect(true) {
+                tokenListViewModel.onRetryButtonClick()
+                pullRefreshState.endRefresh()
+            }
+        }
         AnimatedVisibility(visible = tokenListUIState.isLoading) {
             LoadingCircle()
         }
         AnimatedVisibility(visible = tokenListUIState.tokens.isNotEmpty()) {
-            LazyColumn {
-                items(tokenListUIState.tokens) { token ->
-                    ListElement(
-                        token.name,
-                        token.image,
-                        token.symbol,
-                        token.currentPrice.toFloat(),
-                        token.priceChangePercentage24h.toFloat(),
-                        if (tokenListUIState.chipSelected) "$" else "₽",
-                        onClick = {
-                            tokenInfoViewModel.getInfo(token.id)
-                            onClick()
-                            Log.e("INFOR", token.name)
+            Box(Modifier.nestedScroll(pullRefreshState.nestedScrollConnection)) {
+                LazyColumn(Modifier.fillMaxSize()) {
+                    if (!pullRefreshState.isRefreshing) {
+                        items(tokenListUIState.tokens) { token ->
+                            ListElement(
+                                token.name,
+                                token.image,
+                                token.symbol,
+                                token.currentPrice.toFloat(),
+                                token.priceChangePercentage24h.toFloat(),
+                                if (tokenListUIState.chipSelected) "$" else "₽",
+                                onClick = {
+                                    tokenInfoViewModel.onListElementClick(token.id)
+                                    onClick()
+                                    Log.e("INFOR", token.name)
+                                }
+                            )
                         }
+                    }
+                }
+                if (pullRefreshState.progress>0||pullRefreshState.isRefreshing) {
+                    PullToRefreshContainer(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        state = pullRefreshState,
                     )
                 }
-            } 
+            }
         }
         AnimatedVisibility(visible = tokenListUIState.error != null) {
-            ErrorMessage { tokenListViewModel.retry() }
+            ErrorMessage { tokenListViewModel.onRetryButtonClick() }
         }
     }
 }

@@ -18,9 +18,12 @@ class TokenInfoViewModel(
     private val _tokenInfoUIState = MutableStateFlow(TokenInfoUIState())
     val tokenInfoUIState: StateFlow<TokenInfoUIState> = _tokenInfoUIState.asStateFlow()
 
-    fun getInfo(name: String) {
+    fun onListElementClick(name: String) {
         _tokenInfoUIState.update {
-            it.copy(isLoading = true)
+            it.copy(
+                isLoading = true,
+                error = null
+            )
         }
         viewModelScope.launch {
             when (val result = tokenInfoRepository.getTokenInfo(name)) {
@@ -44,7 +47,7 @@ class TokenInfoViewModel(
         }
     }
 
-    fun retry(name: String) {
-        getInfo(name)
+    fun onRetryButtonClick(name: String) {
+        onListElementClick(name)
     }
 }

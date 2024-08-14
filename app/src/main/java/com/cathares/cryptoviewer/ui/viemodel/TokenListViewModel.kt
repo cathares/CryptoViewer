@@ -20,10 +20,10 @@ class TokenListViewModel(
     private val _tokenListUIState = MutableStateFlow(TokenListUIState())
     val tokenListUIState: StateFlow<TokenListUIState> = _tokenListUIState.asStateFlow()
     init {
-        getTokens(chipState[tokenListUIState.value.chipSelected]!!)
+        onListUpdate(chipState[tokenListUIState.value.chipSelected]!!)
     }
 
-    private fun getTokens(currency: String) {
+    private fun onListUpdate(currency: String) {
         _tokenListUIState.update {
             it.copy(isLoading = true)
         }
@@ -44,12 +44,12 @@ class TokenListViewModel(
         }
     }
 
-    fun retry() {
-        getTokens(chipState[tokenListUIState.value.chipSelected]!!)
+    fun onRetryButtonClick() {
+        onListUpdate(chipState[tokenListUIState.value.chipSelected]!!)
     }
-    fun switchChip() {
+    fun onChipSwitch() {
         val chipSelected = _tokenListUIState.value.chipSelected
         _tokenListUIState.value = TokenListUIState(chipSelected = !chipSelected)
-        getTokens(chipState[_tokenListUIState.value.chipSelected]!!)
+        onListUpdate(chipState[_tokenListUIState.value.chipSelected]!!)
     }
 }

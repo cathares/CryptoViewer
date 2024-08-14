@@ -1,6 +1,5 @@
 package com.cathares.cryptoviewer.ui.elements
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,15 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cathares.cryptoviewer.ui.theme.Black
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
 import com.cathares.cryptoviewer.ui.theme.OrangeChipActive
 import com.cathares.cryptoviewer.ui.theme.OrangeChipActiveText
-import com.example.cryptoviewer.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +33,11 @@ fun Chip(name: String, selected: Boolean, onClick: () -> Unit){
                 text = name,
             )
         } },
-        border = FilterChipDefaults.filterChipBorder(borderColor = BlackTransparent),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled = !selected,
+            selected = selected,
+            borderColor = BlackTransparent
+        ),
         enabled = !selected,
         shape = RoundedCornerShape(16.dp),
         colors =  FilterChipDefaults.filterChipColors(
@@ -53,8 +53,8 @@ fun Chip(name: String, selected: Boolean, onClick: () -> Unit){
 @Composable
 fun ChipGroup(selected: Boolean, onClick: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)){
-        Chip(name = "USD  ", selected, onClick)
-        Chip(name = "RUB  ", !selected, onClick)
+        Chip(name = "USD", selected, onClick)
+        Chip(name = "RUB", !selected, onClick)
     }
 }
 

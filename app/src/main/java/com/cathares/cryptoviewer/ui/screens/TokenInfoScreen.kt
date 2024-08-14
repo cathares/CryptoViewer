@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -23,16 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.cathares.cryptoviewer.ui.state.TokenInfoUIState
 import com.cathares.cryptoviewer.ui.elements.ErrorMessage
+import com.cathares.cryptoviewer.ui.state.TokenInfoUIState
 import com.cathares.cryptoviewer.ui.elements.LoadingCircle
 import com.cathares.cryptoviewer.ui.theme.BlackTransparent
-import com.cathares.cryptoviewer.ui.theme.Typography
 import com.cathares.cryptoviewer.ui.theme.bodyLarge
 import com.cathares.cryptoviewer.ui.theme.bodyMedium
 import com.cathares.cryptoviewer.ui.theme.titleLarge
@@ -64,9 +61,9 @@ fun TokenInfoScreen(
                         }
                     },
                 )
-                Divider(
-                    color = BlackTransparent,
+                HorizontalDivider(
                     modifier = Modifier.shadow(4.dp),
+                    color = BlackTransparent
                 )
             }
                  },
@@ -85,14 +82,14 @@ fun TokenInfoScreenContent(
         AnimatedVisibility(visible = tokenInfoUIState.isLoading) {
             LoadingCircle()
         }
-        AnimatedVisibility(visible = tokenInfoUIState.tokenInfo != null) {
+        AnimatedVisibility(visible = !tokenInfoUIState.isLoading && tokenInfoUIState.error == null) {
             TokenDescription(
                 image = tokenInfoUIState.image!!.largeImage,
                 description = tokenInfoUIState.description!!.description,
                 categories = tokenInfoUIState.tokenInfo!!.categories)
         }
         AnimatedVisibility(visible = tokenInfoUIState.error != null) {
-            ErrorMessage { tokenInfoUIState.tokenInfo?.let { tokenInfoViewModel.retry(it.name) } }
+            ErrorMessage { tokenInfoUIState.tokenInfo?.let { tokenInfoViewModel.onRetryButtonClick(it.id) } }
         }
     }
 }
